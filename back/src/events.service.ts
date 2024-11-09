@@ -10,12 +10,12 @@ export class EventsService extends Effect.Service<EventsService>()(
 		accessors: true,
 		effect: Effect.gen(function* () {
 			const pubsub = yield* PubSub.unbounded<{
-				evt: ClientEvents;
+				evt: EventsSchema;
 				namespace: string;
 			}>();
 
 			const service = {
-				publish: (...evts: NonEmptyReadonlyArray<ClientEvents>) => {
+				publish: (...evts: NonEmptyReadonlyArray<EventsSchema>) => {
 					return Effect.gen(function* () {
 						const namespace = yield* FiberRef.get(storeId);
 						return pubsub.offerAll(evts.map((evt) => ({ evt, namespace })));
