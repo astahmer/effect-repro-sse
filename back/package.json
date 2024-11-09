@@ -1,5 +1,5 @@
 {
-	"name": "@monorepo/backend",
+	"name": "back",
 	"type": "module",
 	"exports": {
 		"./api": "./src/http/http.api.ts",
