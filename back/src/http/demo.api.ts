@@ -7,9 +7,11 @@ export class DemoError extends Schema.TaggedError<DemoError>()(
 ) {}
 
 export const DemoApi = HttpApi.empty.add(
-	HttpApiGroup.make("demo").add(
-		HttpApiEndpoint.get("hello", "/hello")
-			.addSuccess(Schema.String)
-			.addError(DemoError),
-	).add(HttpApiEndpoint.get("sse", "/sse").addSuccess(Schema.Any)),
+	HttpApiGroup.make("demo")
+		.add(
+			HttpApiEndpoint.get("hello", "/hello")
+				.addSuccess(Schema.String)
+				.addError(DemoError),
+		)
+		.add(HttpApiEndpoint.get("sse", "/sse").addSuccess(Schema.Any)),
 );

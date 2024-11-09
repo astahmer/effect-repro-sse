@@ -1,14 +1,17 @@
+import { createServer } from "node:http";
 import { DevTools } from "@effect/experimental";
-import { HttpApiBuilder, HttpApiSwagger, HttpMiddleware, HttpServer } from "@effect/platform";
+import {
+	HttpApiBuilder,
+	HttpApiSwagger,
+	HttpMiddleware,
+	HttpServer,
+} from "@effect/platform";
 import { NodeHttpServer, NodeSocket } from "@effect/platform-node";
 import { Config, Layer, pipe } from "effect";
-import { createServer } from "node:http";
 import { DemoLive } from "./demo.live.ts";
 import { Api } from "./http.api.ts";
 
-const ApiLive = HttpApiBuilder.api(Api).pipe(
-	Layer.provide(DemoLive),
-);
+const ApiLive = HttpApiBuilder.api(Api).pipe(Layer.provide(DemoLive));
 
 const ServerLive = pipe(
 	Config.number("PORT").pipe(Config.withDefault(3000)),

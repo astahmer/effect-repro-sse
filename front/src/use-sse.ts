@@ -1,5 +1,5 @@
-import { Schema } from "effect";
 import { EventsSchema } from "@monorepo/backend/schema";
+import { Schema } from "effect";
 import { useEffect } from "react";
 
 const parseEvent = Schema.decodeUnknownSync(EventsSchema);

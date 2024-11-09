@@ -2,7 +2,8 @@
 	"name": "monorepo",
 	"packageManager": "pnpm@9.11.0+sha256.1c0e33f70e5df9eede84a357bdfa0b1f9dba6e58194628d48a1055756f553754",
 	"scripts": {
-		"fmt": "pnpm biome check --fix --unsafe"
+		"fmt": "pnpm biome check --fix --unsafe",
+		"dev": "pnpm -F front -F back --parallel dev"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^1.9.4",
