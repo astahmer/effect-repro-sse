@@ -1,0 +1,44 @@
+{
+	"$schema": "https://biomejs.dev/schemas/1.8.3/schema.json",
+	"organizeImports": {
+		"enabled": true,
+		"ignore": [
+			"**/node_modules/**",
+			"**/dist/**",
+			"**/migrations/**",
+			"**/routeTree.gen.ts"
+		]
+	},
+	"formatter": {
+		"enabled": true,
+		"ignore": [
+			"**/node_modules/**",
+			"**/dist/**",
+			"**/migrations/**",
+			"**/routeTree.gen.ts"
+		]
+	},
+	"linter": {
+		"ignore": ["**/node_modules/**", "**/dist/**"],
+		"enabled": true,
+		"rules": {
+			"recommended": true,
+			"correctness": {
+				"useYield": "off"
+			},
+			"complexity": {
+				"noForEach": "off",
+				"noStaticOnlyClass": "off"
+			},
+			"a11y": {
+				"useKeyWithClickEvents": "off",
+				"useAriaPropsForRole": "off"
+			},
+			"suspicious": {
+				"noArrayIndexKey": "off",
+				"noExplicitAny": "off",
+				"noFocusedTests": "warn"
+			}
+		}
+	}
+}

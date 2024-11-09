@@ -1,0 +1,23 @@
+{
+	"name": "@monorepo/backend",
+	"type": "module",
+	"exports": {
+		"./api": "./src/http/http.api.ts",
+		"./schema": "./src/exported-schemas.ts"
+	},
+	"scripts": {
+		"typecheck": "tsc --noEmit",
+		"nts": "node --no-warnings=ExperimentalWarning --experimental-strip-types",
+		"dev": "PORT=3000 pnpm nts --watch ./src/main.ts",
+		"debug": "PORT=3000 pnpm nts --watch --watch-preserve-output ./src/main.ts"
+	},
+	"dependencies": {
+		"@effect/experimental": "catalog:",
+		"@effect/platform": "catalog:",
+		"@effect/platform-node": "^0.64.20",
+		"effect": "catalog:"
+	},
+	"devDependencies": {
+		"dotenv": "16.4.5"
+	}
+}

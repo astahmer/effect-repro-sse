@@ -1,0 +1,8 @@
+packages:
+    - front
+    - back
+
+catalog:
+    "@effect/experimental": 0.32.2
+    "@effect/platform": 0.69.18
+    effect: 3.10.8
