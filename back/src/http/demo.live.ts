@@ -25,33 +25,35 @@ export class JobRunner extends Effect.Service<JobRunner>()("JobRunner", {
 					yield* Effect.log(`create start: ${userId}`);
 					yield* mailbox.offer("starting");
 
-					yield* Stream.range(1, 5).pipe(
-						Stream.debounce("1 second"),
-						Stream.map(String),
-						Stream.runForEach((current) => {
-							return Effect.gen(function* () {
-								yield* Effect.log(`job ${userId} emitting ${current}`);
-								return yield* mailbox.offer(current);
-							});
-						}),
-						Effect.forkIn(scope),
-					);
+					yield* Effect.gen(function* () {
+						yield* mailbox.offer("1").pipe(Effect.delay(1000));
+						yield* Effect.log(1);
+						yield* mailbox.offer("2").pipe(Effect.delay(1000));
+						yield* Effect.log(2);
+						yield* mailbox.offer("3").pipe(Effect.delay(1000));
+						yield* Effect.log(3);
+						yield* mailbox.offer("4").pipe(Effect.delay(1000));
+						yield* Effect.log(4);
+						yield* mailbox.offer("5").pipe(Effect.delay(1000));
+						yield* Effect.log(5);
+						yield* mailbox.offer("done");
+						yield* mailbox.end;
+					}).pipe(Effect.forkIn(scope));
 
 					return `/sse/${userId}`;
 				}),
 			streamUpdates: (key: string) =>
 				Effect.gen(function* () {
-					const currentKeys = yield* map.keys;
-					console.log({ currentKeys });
-					if (!currentKeys.includes(key)) {
+					if (!map.contains(key)) {
 						return yield* Effect.fail(
 							new DemoError({
-								cause: `key not found: ${key}, current keys: ${currentKeys}`,
+								cause: `key not found: ${key}`,
 							}),
 						);
 					}
 
 					const mailbox = yield* map.get(key);
+					console.log("stream", mailbox.toJSON());
 					const stream = Mailbox.toStream(mailbox);
 					return stream;
 				}),
@@ -81,8 +83,13 @@ export const DemoLive = HttpApiBuilder.group(DemoApi, "demo", (handlers) =>
 				const stream = yield* jobRunner.streamUpdates(userId);
 
 				const encoder = new TextEncoder();
+
 				const res = HttpServerResponse.stream(
-					stream.pipe(Stream.map((_) => encoder.encode(`${_}\n\n`))),
+					stream.pipe(
+						Stream.map((evt) =>
+							encoder.encode(`data: ${JSON.stringify(evt)}\n\n`),
+						),
+					),
 					{
 						contentType: "text/event-stream",
 						headers: Headers.fromInput({

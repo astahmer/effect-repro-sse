@@ -1,10 +1,8 @@
-import { useState } from "react";
 import "./App.css";
-import { useSSE } from "./use-sse";
+import { useSubscription } from "./use-sse";
 
 function App() {
-	const [sseEndoint, setSseEndpoint] = useState<string>();
-	useSSE(sseEndoint ? `http://localhost:3000${sseEndoint}` : undefined);
+	const sub = useSubscription();
 
 	return (
 		<>
@@ -17,7 +15,7 @@ function App() {
 							(res) => res.json(),
 						);
 						console.log(res);
-						setSseEndpoint(res.endpoint);
+						sub(`http://localhost:3000${res.endpoint}`);
 					}}
 				>
 					Send request -{" (FE --> /users/123 BE)"}

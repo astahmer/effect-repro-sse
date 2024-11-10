@@ -1,29 +1,22 @@
-import { EventsSchema } from "@monorepo/backend/schema";
-import { Schema } from "effect";
-import { useEffect } from "react";
-
-const parseEvent = Schema.decodeUnknownSync(EventsSchema);
-
-function listener(message: MessageEvent<string>) {
-	const evt = parseEvent(JSON.parse(message.data));
-	console.log({ message, evt });
-}
-
 function makeSource(url: string) {
-	const src = new EventSource(url);
-	src.addEventListener("message", listener);
-	return src;
+	const source = new EventSource(url);
+	source.addEventListener("message", (e) => {
+		const parsed = JSON.parse(e.data);
+		if (parsed === "done") {
+			source.close();
+		}
+	});
+	return source;
 }
 
-export function useSSE(url: string | undefined) {
-	useEffect(() => {
+export function useSubscription() {
+	return (url: string | undefined) => {
 		if (!url) return;
 		const source = makeSource(url);
 
 		return () => {
 			console.log("$closing source");
-			source.removeEventListener("message", listener);
 			source.close();
 		};
-	}, [url]);
+	};
 }
