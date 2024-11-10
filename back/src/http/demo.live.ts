@@ -7,7 +7,7 @@ export class JobRunner extends Effect.Service<JobRunner>()("JobRunner", {
 	scoped: Effect.gen(function* () {
 		const scope = yield* Effect.scope;
 		const map = yield* Cache.make({
-			capacity: 0,
+			capacity: 100,
 			timeToLive: Duration.minutes(10),
 			lookup: (key: string) =>
 				Effect.gen(function* () {
