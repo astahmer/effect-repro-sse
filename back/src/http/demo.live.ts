@@ -1,12 +1,14 @@
 import { Headers, HttpApiBuilder, HttpServerResponse } from "@effect/platform";
-import { Effect, Mailbox, RcMap, Stream } from "effect";
+import { Cache, Duration, Effect, Exit, Mailbox, RcMap, Stream } from "effect";
 import { DemoApi, DemoError } from "./demo.api.ts";
 
 export class JobRunner extends Effect.Service<JobRunner>()("JobRunner", {
 	accessors: true,
 	scoped: Effect.gen(function* () {
 		const scope = yield* Effect.scope;
-		const map = yield* RcMap.make({
+		const map = yield* Cache.make({
+			capacity: 0,
+			timeToLive: Duration.minutes(10),
 			lookup: (key: string) =>
 				Effect.gen(function* () {
 					console.log(`looking up ${key}`);
@@ -19,7 +21,7 @@ export class JobRunner extends Effect.Service<JobRunner>()("JobRunner", {
 			create: (userId: string) =>
 				Effect.gen(function* () {
 					// TODO start async job
-					const mailbox = yield* RcMap.get(map, userId);
+					const mailbox = yield* map.get(userId);
 					yield* Effect.log(`create start: ${userId}`);
 					yield* mailbox.offer("starting");
 
@@ -39,9 +41,8 @@ export class JobRunner extends Effect.Service<JobRunner>()("JobRunner", {
 				}),
 			streamUpdates: (key: string) =>
 				Effect.gen(function* () {
-					const currentKeys = yield* RcMap.keys(map);
-					const mailbox = yield* RcMap.get(map, key);
-					console.log({ currentKeys, mailbox });
+					const currentKeys = yield* map.keys;
+					console.log({ currentKeys });
 					if (!currentKeys.includes(key)) {
 						return yield* Effect.fail(
 							new DemoError({
@@ -50,6 +51,7 @@ export class JobRunner extends Effect.Service<JobRunner>()("JobRunner", {
 						);
 					}
 
+					const mailbox = yield* map.get(key);
 					const stream = Mailbox.toStream(mailbox);
 					return stream;
 				}),
