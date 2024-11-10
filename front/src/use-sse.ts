@@ -15,8 +15,9 @@ function makeSource(url: string) {
 	return src;
 }
 
-export function useSSE(url: string) {
+export function useSSE(url: string | undefined) {
 	useEffect(() => {
+		if (!url) return;
 		const source = makeSource(url);
 
 		return () => {

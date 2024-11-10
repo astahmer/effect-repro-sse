@@ -37,7 +37,8 @@
 			"suspicious": {
 				"noArrayIndexKey": "off",
 				"noExplicitAny": "off",
-				"noFocusedTests": "warn"
+				"noFocusedTests": "warn",
+				"noShadowRestrictedNames": "off"
 			}
 		}
 	}
